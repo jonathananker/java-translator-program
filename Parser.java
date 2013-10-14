@@ -112,12 +112,13 @@ public class Parser {
 
     private void ref_id() {
 
-        int stackPos = symbolTable.size() - 1;
+        int scopeModifier = 0;
 
         if( is(TK.TILDE)){
             mustbe(TK.TILDE);
 
             if( is(TK.NUM)){
+                scopeModifier = Integer.parseInt(tok.string);
                 mustbe(TK.NUM);
             }
         }
@@ -126,6 +127,12 @@ public class Parser {
         // symbolTable.elementAt(stackPos).add(tok.string);
         // System.out.println(symbolTable);
 
+
+        if(!isInSymbolTable(tok)){
+            System.err.println(tok.string + " is an undeclared variable on line "
+                                + tok.lineNumber);
+            System.exit(1);
+        }
         mustbe(TK.ID);
 
     }
@@ -256,25 +263,27 @@ public class Parser {
 
         mustbe(TK.ID);
 
-        if(!isRedeclaration(tempTok)){
+        if(!isInSymbolTable(tempTok)){
             symbolTable.elementAt(stackPos).add(tempTok.string);
             // System.out.println(symbolTable);
+        }
+        else{
+            System.err.println("redeclaration of variable " + tempTok.string);
         }
 
     }
 
-    private boolean isRedeclaration(Token tempTok){
+    private boolean isInSymbolTable(Token theTok){
 
         int stackPos = symbolTable.size() - 1;
-        int exists = symbolTable.elementAt(stackPos).indexOf(tempTok.string);
+        int exists = symbolTable.elementAt(stackPos).indexOf(theTok.string);
 
         if(exists == -1){
             return false;
         }
         else{
-            System.err.println("redeclaration of variable " + tempTok.string);
             return true;
-        }
+        }   
     }
 
 
