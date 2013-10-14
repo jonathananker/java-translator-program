@@ -32,13 +32,19 @@ public class Parser {
 
     private void program() {
         LinkedList<String> globals = new LinkedList<String>();
+        // globals.add("Stuff");
+        // globals.add("Junk");
         symbolTable.push(globals);
+        // symbolTable.elementAt(0).add("Hereweare");
+        // System.out.println(symbolTable.elementAt(0));
         block();
     }
 
     private void block(){
+        symbolTable.push(new LinkedList<String>());
         declaration_list();
         statement_list();
+        symbolTable.pop();
     }
 
     private void declaration_list() {
@@ -52,11 +58,15 @@ public class Parser {
     }
 
     private void declaration() {
+
+        int stackPos = symbolTable.size() - 1;
+
         mustbe(TK.DECLARE);
-        mustbe(TK.ID);
+        addToSymbolTable();
+
         while( is(TK.COMMA) ) {
-            scan();
-            mustbe(TK.ID);
+            mustbe(TK.COMMA);
+            addToSymbolTable();
         }
     }
 
@@ -101,6 +111,9 @@ public class Parser {
     }
 
     private void ref_id() {
+
+        int stackPos = symbolTable.size() - 1;
+
         if( is(TK.TILDE)){
             mustbe(TK.TILDE);
 
@@ -109,6 +122,10 @@ public class Parser {
             }
         }
         // System.err.println (tok + " in ref_id()");
+
+        // symbolTable.elementAt(stackPos).add(tok.string);
+        // System.out.println(symbolTable);
+
         mustbe(TK.ID);
 
     }
@@ -232,4 +249,15 @@ public class Parser {
                             + tok.lineNumber + " " + msg );
         System.exit(1);
     }
+
+    private void addToSymbolTable(){
+        int stackPos = symbolTable.size() - 1;
+        Token tempTok = tok;
+
+        mustbe(TK.ID);
+        symbolTable.elementAt(stackPos).add(tempTok.string);
+        System.out.println(symbolTable);
+    }
+
 }
+
