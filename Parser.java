@@ -255,9 +255,29 @@ public class Parser {
         Token tempTok = tok;
 
         mustbe(TK.ID);
-        symbolTable.elementAt(stackPos).add(tempTok.string);
-        System.out.println(symbolTable);
+
+        if(!isRedeclaration(tempTok)){
+            symbolTable.elementAt(stackPos).add(tempTok.string);
+            // System.out.println(symbolTable);
+        }
+
     }
+
+    private boolean isRedeclaration(Token tempTok){
+
+        int stackPos = symbolTable.size() - 1;
+        int exists = symbolTable.elementAt(stackPos).indexOf(tempTok.string);
+
+        if(exists == -1){
+            return false;
+        }
+        else{
+            System.err.println("redeclaration of variable " + tempTok.string);
+            return true;
+        }
+    }
+
+
 
 }
 
