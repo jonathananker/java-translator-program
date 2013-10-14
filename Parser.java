@@ -12,7 +12,7 @@ public class Parser {
     private static final TK[] ADDOP_ARR = {TK.PLUS, TK.MINUS};
     private static final TK[] MULTOP_ARR = {TK.TIMES, TK.DIVIDE};
 
-    private Stack<LinkedList<String>> symbolTable;
+    private Stack<LinkedList<String>> symbolTable = new Stack<LinkedList<String>>();
 
     // tok is global to all these parsing methods;
     // scan just calls the scanner's scan method and saves the result in tok.
@@ -31,6 +31,8 @@ public class Parser {
     }
 
     private void program() {
+        LinkedList<String> globals = new LinkedList<String>();
+        symbolTable.push(globals);
         block();
     }
 
