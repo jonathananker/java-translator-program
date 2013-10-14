@@ -1,0 +1,9 @@
+*.correct
+*.e
+*.output
+*.class
+run
+run1
+runall
+showdiffs
+Makefile
