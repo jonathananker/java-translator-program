@@ -119,14 +119,27 @@ public class Parser {
 
             if( is(TK.NUM)){
                 scopeModifier = Integer.parseInt(tok.string);
+                // System.out.println(scopeModifier);
                 mustbe(TK.NUM);
+
+                if(!isInScope(scopeModifier)){
+                    System.err.println("no such variable ~" + scopeModifier
+                        + tok.string + " on line " + tok.lineNumber);
+                }
+            }
+            else{
+
+
+                if(isGlobal()){
+                    System.err.println("no such variable ~"
+                        + tok.string + " on line " + tok.lineNumber);
+                }
             }
         }
-        // System.err.println (tok + " in ref_id()");
 
+        // System.err.println (tok + " in ref_id()");
         // symbolTable.elementAt(stackPos).add(tok.string);
         // System.out.println(symbolTable);
-
 
         if(!isInSymbolTable(tok)){
             System.err.println(tok.string + " is an undeclared variable on line "
@@ -274,6 +287,7 @@ public class Parser {
 
     }
 
+    // Checks if top of symbol table contains the variable (tok)
     private boolean isInLatestScope(Token theTok){
 
         int stackPos = symbolTable.size() - 1;
@@ -287,6 +301,7 @@ public class Parser {
         }   
     }
 
+    // Checks if whole symbol table contains the variable (tok)
     private boolean isInSymbolTable(Token theTok){
 
         int check = 0;
@@ -299,6 +314,43 @@ public class Parser {
         }
 
         return false;
+    }
+
+    // Checks if variable is in the specified scope
+    private boolean isInScope(int scope){
+
+        int stackPos = (symbolTable.size() - 1) - scope;
+        int exists = 0;
+
+        if(stackPos < 0){
+            return false;
+        }
+        else{
+            exists = symbolTable.elementAt(stackPos).indexOf(tok.string);
+
+            if(exists == -1){
+                return false;
+            }
+            else{
+                return true;
+            }
+
+        }
+    }
+
+
+    private boolean isGlobal(){
+
+        // System.out.println(symbolTable);
+
+        int exists = symbolTable.elementAt(0).indexOf(tok.string);
+
+        if(exists == -1){
+            return false;
+        }
+        else{
+            return true;
+        }
     }
 
 
