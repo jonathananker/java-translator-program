@@ -6,6 +6,8 @@ import java.util.Stack;
 
 public class Parser {
 
+
+    // Here are some macros for first sets
     private static final TK[] STATEMENT_ARR = {TK.TILDE, TK.ID, TK.PRINT, TK.DO, TK.IF};
     private static final TK[] REF_ID_ARR = {TK.TILDE, TK.ID};
     private static final TK[] ASSIGN_ARR = REF_ID_ARR;
@@ -31,12 +33,6 @@ public class Parser {
     }
 
     private void program() {
-        // LinkedList<String> globals = new LinkedList<String>();
-        // globals.add("Stuff");
-        // globals.add("Junk");
-        // symbolTable.push(globals);
-        // symbolTable.elementAt(0).add("Hereweare");
-        // System.out.println(symbolTable.elementAt(0));
         block();
     }
 
@@ -58,8 +54,6 @@ public class Parser {
     }
 
     private void declaration() {
-
-        int stackPos = symbolTable.size() - 1;
 
         mustbe(TK.DECLARE);
         addToSymbolTable();
@@ -92,7 +86,7 @@ public class Parser {
             e_If();
         }
         else{
-            // System.err.println (tok + " error in statement();");
+            System.err.println (tok + " error in statement();");
         }
 
     }
@@ -118,34 +112,26 @@ public class Parser {
             mustbe(TK.TILDE);
 
             if( is(TK.NUM)){
-                scopeModifier = Integer.parseInt(tok.string);
-                // System.out.println(scopeModifier);
-                mustbe(TK.NUM);
 
+                scopeModifier = Integer.parseInt(tok.string);
+                mustbe(TK.NUM);
                 if(!isInScope(scopeModifier)){
                     System.err.println("no such variable ~" + scopeModifier
                         + tok.string + " on line " + tok.lineNumber);
                 }
+
             }
             else{
-
-
-                if(!isGlobal()){
+                if(!isInScope(symbolTable.size() - 1)){
                     System.err.println("no such variable ~"
                         + tok.string + " on line " + tok.lineNumber);
-                    // System.out.println(symbolTable);
                 }
             }
         }
-
-        // System.err.println (tok + " in ref_id()");
-        // symbolTable.elementAt(stackPos).add(tok.string);
-        // System.out.println(symbolTable);
-
+ 
         if(!isInSymbolTable(tok)){
             System.err.println(tok.string + " is an undeclared variable on line "
                                 + tok.lineNumber);
-            // System.out.println(symbolTable);
             System.exit(1);
         }
         mustbe(TK.ID);
@@ -224,7 +210,6 @@ public class Parser {
         mustbe(TK.ENDIF);
 
 
-
         // System.err.println (tok + " in e_If()");
 
     }
@@ -272,27 +257,29 @@ public class Parser {
         System.exit(1);
     }
 
+
+    // Adds tok to the current scope of symbol table
     private void addToSymbolTable(){
         int stackPos = symbolTable.size() - 1;
-        Token tempTok = tok;
+        String tempTok = tok.string;
 
         mustbe(TK.ID);
 
         if(!isInLatestScope(tempTok)){
-            symbolTable.elementAt(stackPos).add(tempTok.string);
+            symbolTable.elementAt(stackPos).add(tempTok);
             // System.out.println(symbolTable);
         }
         else{
-            System.err.println("redeclaration of variable " + tempTok.string);
+            System.err.println("redeclaration of variable " + tempTok);
         }
 
     }
 
     // Checks if top of symbol table contains the variable (tok)
-    private boolean isInLatestScope(Token theTok){
+    private boolean isInLatestScope(String theTok){
 
         int stackPos = symbolTable.size() - 1;
-        int exists = symbolTable.elementAt(stackPos).indexOf(theTok.string);
+        int exists = symbolTable.elementAt(stackPos).indexOf(theTok);
 
         if(exists == -1){
             return false;
@@ -336,24 +323,6 @@ public class Parser {
                 return true;
             }
 
-        }
-    }
-
-
-    private boolean isGlobal(){
-
-        // System.out.println(symbolTable);
-
-        int exists = symbolTable.elementAt(0).indexOf(tok.string);
-
-        // System.out.println("exists " + exists);
-
-        if(exists == -1){
-            return false;
-        }
-        else{
-            // System.out.println("Returning true");
-            return true;
         }
     }
 
