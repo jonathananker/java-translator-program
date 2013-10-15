@@ -31,10 +31,10 @@ public class Parser {
     }
 
     private void program() {
-        LinkedList<String> globals = new LinkedList<String>();
+        // LinkedList<String> globals = new LinkedList<String>();
         // globals.add("Stuff");
         // globals.add("Junk");
-        symbolTable.push(globals);
+        // symbolTable.push(globals);
         // symbolTable.elementAt(0).add("Hereweare");
         // System.out.println(symbolTable.elementAt(0));
         block();
@@ -130,9 +130,10 @@ public class Parser {
             else{
 
 
-                if(isGlobal()){
+                if(!isGlobal()){
                     System.err.println("no such variable ~"
                         + tok.string + " on line " + tok.lineNumber);
+                    // System.out.println(symbolTable);
                 }
             }
         }
@@ -345,10 +346,13 @@ public class Parser {
 
         int exists = symbolTable.elementAt(0).indexOf(tok.string);
 
+        // System.out.println("exists " + exists);
+
         if(exists == -1){
             return false;
         }
         else{
+            // System.out.println("Returning true");
             return true;
         }
     }
