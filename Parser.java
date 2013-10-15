@@ -63,7 +63,7 @@ public class Parser {
         mustbe(TK.DECLARE);
         addToSymbolTable();
         
-        System.out.print("int VARIABLE;\n");
+        System.out.print("int c_" + tok.string + ";\n");
 
         while( is(TK.COMMA) ) {
             mustbe(TK.COMMA);
@@ -152,7 +152,7 @@ public class Parser {
             System.exit(1);
         }
         mustbe(TK.ID);
-        System.out.print("VARIABLE");
+        System.out.print("c_" + tok.string);
 
     }
 
