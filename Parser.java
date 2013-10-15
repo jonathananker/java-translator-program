@@ -131,6 +131,7 @@ public class Parser {
         if(!isInSymbolTable(tok)){
             System.err.println(tok.string + " is an undeclared variable on line "
                                 + tok.lineNumber);
+            // System.out.println(symbolTable);
             System.exit(1);
         }
         mustbe(TK.ID);
@@ -263,7 +264,7 @@ public class Parser {
 
         mustbe(TK.ID);
 
-        if(!isInSymbolTable(tempTok)){
+        if(!isInLatestScope(tempTok)){
             symbolTable.elementAt(stackPos).add(tempTok.string);
             // System.out.println(symbolTable);
         }
@@ -273,7 +274,7 @@ public class Parser {
 
     }
 
-    private boolean isInSymbolTable(Token theTok){
+    private boolean isInLatestScope(Token theTok){
 
         int stackPos = symbolTable.size() - 1;
         int exists = symbolTable.elementAt(stackPos).indexOf(theTok.string);
@@ -286,6 +287,19 @@ public class Parser {
         }   
     }
 
+    private boolean isInSymbolTable(Token theTok){
+
+        int check = 0;
+
+        for(int i = 0; i < symbolTable.size(); i++){
+            check = symbolTable.elementAt(i).indexOf(theTok.string);
+            if(check != -1){
+                return true;
+            }
+        }
+
+        return false;
+    }
 
 
 }
