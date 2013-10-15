@@ -33,14 +33,19 @@ public class Parser {
     }
 
     private void program() {
+        System.out.print("#include <stdio.h>\nmain()");
         block();
     }
 
     private void block(){
+        System.out.print("{\n");
+        
         symbolTable.push(new LinkedList<String>());
         declaration_list();
         statement_list();
         symbolTable.pop();
+        
+        System.out.print("}\n");
     }
 
     private void declaration_list() {
@@ -57,6 +62,8 @@ public class Parser {
 
         mustbe(TK.DECLARE);
         addToSymbolTable();
+        
+        System.out.print("int VARIABLE;\n");
 
         while( is(TK.COMMA) ) {
             mustbe(TK.COMMA);
@@ -94,14 +101,24 @@ public class Parser {
     private void print() {
         // System.err.println (tok + " in print()");
         mustbe(TK.PRINT);
+       
+        System.out.print("printf(\"%d\\n\", ");
+        
         expr();
+        
+        System.out.print(");\n");
     }
 
     private void assigment() {
         // System.err.println (tok + " in assignment()");
         ref_id();
         mustbe(TK.ASSIGN);
+        
+        System.out.print(" = ");
+        
         expr();
+        
+        System.out.print(";\n");
     }
 
     private void ref_id() {
@@ -135,6 +152,7 @@ public class Parser {
             System.exit(1);
         }
         mustbe(TK.ID);
+        System.out.print("VARIABLE");
 
     }
 
@@ -143,9 +161,11 @@ public class Parser {
         while( isMany(ADDOP_ARR) ){
             if(is(TK.PLUS)){
                 mustbe(TK.PLUS);
+                System.out.print(" + ");
             }
             else{
                 mustbe(TK.MINUS);
+                System.out.print(" - ");
             }
 
             term();
@@ -157,9 +177,11 @@ public class Parser {
         while( isMany(MULTOP_ARR) ){
             if(is(TK.TIMES)){
                 mustbe(TK.TIMES);
+                System.out.print(" * ");
             }
             else{
                 mustbe(TK.DIVIDE);
+                System.out.print(" / ");
             }
 
             factor();
@@ -174,6 +196,7 @@ public class Parser {
             mustbe(TK.RPAREN);
         }
         else if( is(TK.NUM) ){
+            System.out.print( Integer.parseInt(tok.string));
             mustbe(TK.NUM);
         }
         else if( isMany(REF_ID_ARR) ){
@@ -189,6 +212,7 @@ public class Parser {
     private void e_Do() {
         // System.err.println (tok + " in e_Do()");
         mustbe(TK.DO);
+        System.out.print("while");
         guarded_command();
         mustbe(TK.ENDDO);
     }
@@ -196,14 +220,17 @@ public class Parser {
     private void e_If() {
         // System.err.println (tok + " in e_If()");
         mustbe(TK.IF);
+        System.out.print("if");
         guarded_command();
         while(is(TK.ELSEIF)){
             mustbe(TK.ELSEIF);
+            System.out.print("else if");
             guarded_command();
         }
 
         if(is(TK.ELSE)){
             mustbe(TK.ELSE);
+            System.out.print("else");
             block();
         }
 
@@ -216,7 +243,9 @@ public class Parser {
 
     private void guarded_command() {
         // System.err.println (tok + " in guarded_command()");
+        System.out.println("(");
         expr();
+        System.out.println(" <= 0)");
         mustbe(TK.THEN);
         block();
     }
