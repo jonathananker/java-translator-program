@@ -93,6 +93,7 @@ public class Parser {
         else if ( is(TK.FOR) ){
 
         	e_For();
+        }
         else{
             System.err.println (tok + " error in statement();");
         }
