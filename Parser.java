@@ -122,13 +122,16 @@ public class Parser {
     private void ref_id() {
 
         int scopeModifier = 0;
+        int detectVarLevel = 0;
 
         if( is(TK.TILDE)){
             mustbe(TK.TILDE);
+            detectVarLevel = 0;
 
             if( is(TK.NUM)){
 
                 scopeModifier = Integer.parseInt(tok.string);
+                detectVarLevel = whichScope(scopeModifier);
                 mustbe(TK.NUM);
                 if(!isInScope(scopeModifier)){
                     System.err.println("no such variable ~" + scopeModifier
@@ -145,13 +148,19 @@ public class Parser {
                 }
             }
         }
+        else{
+            detectVarLevel = whereIsTok(tok.string);
+        }
  
         if(!isInSymbolTable(tok)){
             System.err.println(tok.string + " is an undeclared variable on line "
                                 + tok.lineNumber);
             System.exit(1);
         }
-        System.out.print("c_" + tok.string);
+        else{
+
+        }
+        System.out.print("c_" + tok.string + "_" + detectVarLevel );
         mustbe(TK.ID);
 
     }
@@ -298,7 +307,7 @@ public class Parser {
         if(!isInLatestScope(tempTok)){
             symbolTable.elementAt(stackPos).add(tempTok);
             // System.out.println(symbolTable);
-            System.out.print("int c_" + tok.string + ";\n");
+            System.out.print("int c_" + tok.string + "_" + (symbolTable.size() - 1) + ";\n");
         }
         else{
             System.err.println("redeclaration of variable " + tempTok);
@@ -335,6 +344,33 @@ public class Parser {
         }
 
         return false;
+    }
+
+    private int whichScope(int scopeModifier){
+
+        int currScope = symbolTable.size() - 1;
+
+        if(currScope >= scopeModifier){
+            return (currScope - scopeModifier);
+        }
+        else{
+            return -50;
+        }
+    }
+
+    private int whereIsTok(String varName){
+
+        int check = 0;
+
+        for(int i = (symbolTable.size() - 1); i >= 0; i--){
+            check = symbolTable.elementAt(i).indexOf(varName);
+
+            if(check != -1){
+            return i;
+            }
+        }
+
+        return -20;
     }
 
     // Checks if variable is in the specified scope
