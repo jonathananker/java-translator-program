@@ -8,7 +8,7 @@ public class Parser {
 
 
     // Here are some macros for first sets
-    private static final TK[] STATEMENT_ARR = {TK.TILDE, TK.ID, TK.PRINT, TK.DO, TK.IF};
+    private static final TK[] STATEMENT_ARR = {TK.TILDE, TK.ID, TK.PRINT, TK.DO, TK.IF, TK.FOR};
     private static final TK[] REF_ID_ARR = {TK.TILDE, TK.ID};
     private static final TK[] ASSIGN_ARR = REF_ID_ARR;
     private static final TK[] ADDOP_ARR = {TK.PLUS, TK.MINUS};
@@ -90,6 +90,9 @@ public class Parser {
         else if ( is(TK.IF) ){
             e_If();
         }
+        else if ( is(TK.FOR) ){
+
+        	e_For();
         else{
             System.err.println (tok + " error in statement();");
         }
@@ -250,6 +253,29 @@ public class Parser {
 
         // System.err.println (tok + " in e_If()");
 
+    }
+    
+   private void e_For() {
+    	mustbe(TK.FOR);
+    	
+        System.out.print("int iterator" + symbolTable.size() + ";\nfor");
+        for_command();
+        mustbe(TK.ENDFOR);
+    }
+
+    private void for_command() {
+    	for_expr();
+        block();
+
+    }    
+    
+    private void for_expr() {
+    	System.out.print("(iterator" + symbolTable.size() + " = ");
+    	expr();
+        System.out.print("; iterator" + symbolTable.size() + " < ");
+    	expr();
+        System.out.print("; iterator" + symbolTable.size() + "++)");
+        mustbe(TK.THEN);
     }
 
     private void guarded_command() {
