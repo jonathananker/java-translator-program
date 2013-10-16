@@ -2,6 +2,7 @@
 *.e
 *.output
 *.class
+*.out
 run
 run1
 runall

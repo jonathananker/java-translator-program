@@ -62,8 +62,6 @@ public class Parser {
 
         mustbe(TK.DECLARE);
         addToSymbolTable();
-        
-        System.out.print("int c_" + tok.string + ";\n");
 
         while( is(TK.COMMA) ) {
             mustbe(TK.COMMA);
@@ -112,10 +110,10 @@ public class Parser {
     private void assigment() {
         // System.err.println (tok + " in assignment()");
         ref_id();
+        
         mustbe(TK.ASSIGN);
-        
         System.out.print(" = ");
-        
+
         expr();
         
         System.out.print(";\n");
@@ -135,6 +133,7 @@ public class Parser {
                 if(!isInScope(scopeModifier)){
                     System.err.println("no such variable ~" + scopeModifier
                         + tok.string + " on line " + tok.lineNumber);
+                    System.exit(1);
                 }
 
             }
@@ -142,6 +141,7 @@ public class Parser {
                 if(!isInScope(symbolTable.size() - 1)){
                     System.err.println("no such variable ~"
                         + tok.string + " on line " + tok.lineNumber);
+                    System.exit(1);
                 }
             }
         }
@@ -151,8 +151,8 @@ public class Parser {
                                 + tok.lineNumber);
             System.exit(1);
         }
-        mustbe(TK.ID);
         System.out.print("c_" + tok.string);
+        mustbe(TK.ID);
 
     }
 
@@ -192,8 +192,10 @@ public class Parser {
     private void factor() {
         if( is(TK.LPAREN) ){
             mustbe(TK.LPAREN);
+            System.out.print(" ( ");
             expr();
             mustbe(TK.RPAREN);
+            System.out.print(" ) ");
         }
         else if( is(TK.NUM) ){
             System.out.print( Integer.parseInt(tok.string));
@@ -292,16 +294,18 @@ public class Parser {
         int stackPos = symbolTable.size() - 1;
         String tempTok = tok.string;
 
-        mustbe(TK.ID);
 
         if(!isInLatestScope(tempTok)){
             symbolTable.elementAt(stackPos).add(tempTok);
             // System.out.println(symbolTable);
+            System.out.print("int c_" + tok.string + ";\n");
         }
         else{
             System.err.println("redeclaration of variable " + tempTok);
         }
 
+        mustbe(TK.ID);
+        return;
     }
 
     // Checks if top of symbol table contains the variable (tok)
